@@ -18,6 +18,9 @@ func main() {
 	svc := service.NewURLService(store, "http://localhost:8080")
 	h := handler.NewURLHandler(svc)
 
+	// Serve static UI file (index.html) for testing API in browser
+	r.StaticFile("/", "./index.html")
+
 	r.POST("/encode", h.Encode)
 	r.POST("/decode", h.Decode)
 
