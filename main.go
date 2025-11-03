@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"url-shortener/handler"
 	"url-shortener/service"
 	"url-shortener/storage"
@@ -15,7 +16,11 @@ func main() {
 	r.Use(CORSMiddleware())
 
 	store := storage.NewMemoryStore()
-	svc := service.NewURLService(store, "http://localhost:8080")
+
+	// Determine base URL
+	baseURL := getBaseURL()
+
+	svc := service.NewURLService(store, baseURL)
 	h := handler.NewURLHandler(svc)
 
 	// Serve static UI file (index.html) for testing API in browser
@@ -24,7 +29,26 @@ func main() {
 	r.POST("/encode", h.Encode)
 	r.POST("/decode", h.Decode)
 
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	r.Run(":" + port)
+}
+
+func getBaseURL() string {
+	if baseURL := os.Getenv("BASE_URL"); baseURL != "" {
+		return baseURL
+	}
+
+	// Check if running on Render
+	if renderURL := os.Getenv("RENDER_EXTERNAL_URL"); renderURL != "" {
+		return renderURL
+	}
+
+	// Default to localhost for local development
+	return "http://localhost:8080"
 }
 
 func CORSMiddleware() gin.HandlerFunc {
