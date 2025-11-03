@@ -1,78 +1,133 @@
-# URL Shortener
+# 🔗 URL Shortener
 
 A simple URL shortening service built with **Golang** and **Gin**.
 
+## 🌐 Live Demo
+
+**Try it now:** [https://go-url-shortener-euss.onrender.com/](https://go-url-shortener-euss.onrender.com/)
+
+
 ---
 
-## 🚀 Features
-- `/encode`: Converts a long URL into a short URL  
-- `/decode`: Restores a short URL back to its original  
-- Thread-safe in-memory store using `sync.RWMutex`  
-- JSON input/output  
-- Unit tests for both endpoints  
+## ✨ Features
 
+- 🔗 **URL Encoding**: Converts long URLs into short, shareable links
+- 🔍 **URL Decoding**: Restores short URLs back to their original form
+- 🔒 **Thread-Safe**: In-memory store with `sync.RWMutex` for concurrent access
+
+---
+
+## 🏗️ Tech Stack
+
+- **Backend**: Go (Golang) with Gin Framework
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Storage**: In-memory data store
+- **Deployment**: Render
 ---
 
 ## ⚙️ Run Locally
 
-#### 1️⃣ Install dependencies
+### Prerequisites
+- Go 1.24 or higher
+- Git
+
+### Installation Steps
+
+#### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/yourusername/url-shortener.git
+cd url-shortener
+```
+
+#### 2️⃣ Install dependencies
 ```bash
 go mod tidy
 ```
 
-#### 2️⃣ Run the service
+#### 3️⃣ Run the service
 ```bash
 go run main.go
 ```
-Server starts by default on: http://localhost:8080
+
+Server starts by default on: **http://localhost:8080**
+
+#### 4️⃣ Open your browser
+Navigate to `http://localhost:8080` to use the web interface!
 
 ---
 
 ## 📡 API Endpoints
 
-#### ➤ POST /encode
+### ➤ POST `/encode`
+Create a shortened URL from a long URL.
 
-Request body:
+**Request:**
 ```json
 {
-  "url": "https://example.com/very/long/link"
+  "url": "https://example.com/very/long/link/to/shorten"
 }
 ```
 
-Response:
+**Response:**
 ```json
 {
   "short_url": "http://localhost:8080/abc123"
 }
 ```
 
-#### ➤ POST /decode
-
-
-Request body:
-```json
-{
-  "short_url": "http://localhost:8080/abc123"
-}
-```
-
-Response:
-```json
-{
-  "original_url": "https://example.com/very/long/link"
-}
+**cURL Example:**
+```bash
+curl -X POST http://localhost:8080/encode \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com/very/long/link"}'
 ```
 
 ---
 
-## 🧪 Run Tests
+### ➤ POST `/decode`
+Retrieve the original URL from a shortened URL.
 
-#### 1️⃣ Run all tests
+**Request:**
+```json
+{
+  "short_url": "http://localhost:8080/abc123"
+}
+```
+
+**Response:**
+```json
+{
+  "original_url": "https://example.com/very/long/link/to/shorten"
+}
+```
+
+**cURL Example:**
+```bash
+curl -X POST http://localhost:8080/decode \
+  -H "Content-Type: application/json" \
+  -d '{"short_url":"http://localhost:8080/abc123"}'
+```
+
+---
+
+## 🧪 Testing
+
+### Run all tests
 ```bash
 go test ./...
 ```
 
-#### 2️⃣ Run with detailed output
+### Run with detailed output
 ```bash
 go test -v
 ```
+
+---
+
+## 🙏 Acknowledgments
+
+- Built with [Gin Web Framework](https://gin-gonic.com/)
+- UI design enhanced with AI assistance
+- Deployed on [Render](https://render.com/)
+
+---
