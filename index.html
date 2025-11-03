@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go URL Shortener</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      width: 100%;
+      max-width: 600px;
+    }
+    
+    h1 {
+      color: white;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      animation: fadeInDown 0.6s ease;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 35px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      margin-bottom: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 0.6s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 25px 70px rgba(0,0,0,0.4);
+    }
+    
+    .card h3 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.4em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 15px;
+    }
+    
+    input {
+      width: 100%;
+      padding: 15px 20px;
+      border-radius: 12px;
+      border: 2px solid #e0e0e0;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    
+    input::placeholder {
+      color: #999;
+    }
+    
+    button {
+      width: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      background: #f0f4ff;
+      border-left: 4px solid #667eea;
+      word-break: break-all;
+      display: none;
+      animation: slideIn 0.4s ease;
+    }
+    
+    .result.show {
+      display: block;
+    }
+    
+    .result.success {
+      background: #d4edda;
+      border-left-color: #28a745;
+      color: #155724;
+    }
+    
+    .result.error {
+      background: #f8d7da;
+      border-left-color: #dc3545;
+      color: #721c24;
+    }
+    
+    .result-label {
+      font-weight: 600;
+      margin-bottom: 5px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .result-value {
+      font-size: 16px;
+      color: #333;
+    }
+    
+    .copy-btn {
+      background: #28a745;
+      margin-top: 10px;
+      padding: 10px;
+      font-size: 14px;
+    }
+    
+    .copy-btn:hover {
+      background: #218838;
+      box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        max-height: 0;
+      }
+      to {
+        opacity: 1;
+        max-height: 200px;
+      }
+    }
+    
+    @media (max-width: 640px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      .card {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🚀 URL Shortener</h1>
+
+    <div class="card">
+      <h3>🔗 Shorten URL</h3>
+      <div class="input-group">
+        <input type="text" id="encodeUrl" placeholder="Enter your long URL here..." />
+      </div>
+      <button onclick="encodeUrl()">Shorten URL</button>
+      <div class="result" id="encodeResult"></div>
+    </div>
+
+    <div class="card">
+      <h3>🔍 Decode URL</h3>
+      <div class="input-group">
+        <input type="text" id="decodeUrl" placeholder="Enter shortened URL..." />
+      </div>
+      <button onclick="decodeUrl()">Decode URL</button>
+      <div class="result" id="decodeResult"></div>
+    </div>
+  </div>
+
+  <script>
+    const baseURL = "http://localhost:8080";
+
+    async function encodeUrl() {
+      const url = document.getElementById("encodeUrl").value;
+      const resultDiv = document.getElementById("encodeResult");
+      
+      if (!url) {
+        showResult(resultDiv, "Please enter a URL", true);
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${baseURL}/encode`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url })
+        });
+        const data = await res.json();
+        
+        if (data.short_url) {
+          showResult(resultDiv, `
+            <div class="result-label">✓ Shortened URL</div>
+            <div class="result-value">${data.short_url}</div>
+            <button class="copy-btn" onclick="copyToClipboard('${data.short_url}')">📋 Copy to Clipboard</button>
+          `, false);
+        } else {
+          showResult(resultDiv, `Error: ${data.error || 'Failed to encode'}`, true);
+        }
+      } catch (error) {
+        showResult(resultDiv, `Error: ${error.message}`, true);
+      }
+    }
+
+    async function decodeUrl() {
+      const url = document.getElementById("decodeUrl").value;
+      const resultDiv = document.getElementById("decodeResult");
+      
+      if (!url) {
+        showResult(resultDiv, "Please enter a shortened URL", true);
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${baseURL}/decode`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ short_url: url })
+        });
+        const data = await res.json();
+        
+        if (data.original_url) {
+          showResult(resultDiv, `
+            <div class="result-label">✓ Original URL</div>
+            <div class="result-value">${data.original_url}</div>
+            <button class="copy-btn" onclick="copyToClipboard('${data.original_url}')">📋 Copy to Clipboard</button>
+          `, false);
+        } else {
+          showResult(resultDiv, `Error: ${data.error || 'Failed to decode'}`, true);
+        }
+      } catch (error) {
+        showResult(resultDiv, `Error: ${error.message}`, true);
+      }
+    }
+    
+    function showResult(element, content, isError) {
+      element.innerHTML = content;
+      element.className = 'result show ' + (isError ? 'error' : 'success');
+    }
+    
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('✓ Copied to clipboard!');
+      }).catch(() => {
+        alert('Failed to copy to clipboard');
+      });
+    }
+  </script>
+</body>
+</html> 
